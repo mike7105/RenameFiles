@@ -1,10 +1,8 @@
-O:\Progs\Python\TestLink\venv\Scripts\activate
+O:\Progs\Python\RenameFiles\venv\Scripts\activate
 pyinstaller --onefile -w ^
 --icon=modules\ico\ico.ico ^
 --add-data "modules/ico";"modules/ico/" ^
---add-data "geckodriver.exe";"." ^
--n testLink_GUI.exe ^
---hidden-import selenium ^
+-n renameFiles.exe ^
 --hidden-import PyQt5 ^
-testLinkW.py
+renameFiles.py
 pause

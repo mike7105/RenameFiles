@@ -7,6 +7,19 @@ import shutil
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
+class ClickedLabel(QtWidgets.QLabel):
+    """Кдикабельная по двойному нажатию Label"""
+    doubleclicked = QtCore.pyqtSignal()
+
+    def mouseDoubleClickEvent(self, event):
+        """
+        Событие двойногонажатия
+        :param event: событие
+        """
+        super().mouseDoubleClickEvent(event)
+
+        self.doubleclicked.emit()
+
 class MyStandardItemModel(QtGui.QStandardItemModel):
     """
     Класс, поддерживающий подкраску ячейки
@@ -149,7 +162,10 @@ class MyWindow(QtWidgets.QWidget):
         # self.vbox.addWidget(self.progressBar)
 
         self.lblStatus = QtWidgets.QLabel()
-        self.lblPerStatus = QtWidgets.QLabel()
+        self.resPath = ""
+        self.lblPerStatus = ClickedLabel()
+        self.lblPerStatus.doubleclicked.connect(self.open_folder)
+        self.lblPerStatus.setToolTip("Double click to open folder")
 
         self.statusBar.addWidget(self.progressBar, 2)
         self.statusBar.addWidget(self.lblStatus, 1)
@@ -163,6 +179,14 @@ class MyWindow(QtWidgets.QWidget):
         self.progress = self.parent().progress
 
         self.rens = set()
+
+    @QtCore.pyqtSlot()
+    def open_folder(self):
+        """
+        Открывает папку с переименованными файлами
+        """
+        if self.resPath:
+            os.startfile(self.resPath)
 
     @QtCore.pyqtSlot()
     def on_open_result(self):
@@ -286,6 +310,8 @@ class MyWindow(QtWidgets.QWidget):
             self.finishTime = time.time()
             self.lblStatus.setText(f"Done! duration: {(self.finishTime - self.startTime) / 60:.4f} min")
             self.setAllDisabled(False)
+
+            os.startfile(self.resPath)
 
     def setAllDisabled(self, flag=True):
         """
